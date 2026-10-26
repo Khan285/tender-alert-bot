@@ -1,0 +1,17 @@
+{
+  "listing_urls": [
+    "https://www.bppa.gov.bd/advertisement-services.html"
+  ],
+  "link_pattern": "advertisement-services/details-\\d+",
+  "keywords_any_case": [
+    "software test", "testing", "quality assurance", "quality control",
+    "software", "system audit", "it audit", "information system",
+    "information technology", "e-governance", "e-government",
+    "digital", "application development", "web portal", "mobile app",
+    "cyber", "ict consultant", "it consultant", "it specialist",
+    "database", "mis ", "erp"
+  ],
+  "keywords_exact_case": ["QA", "ICT", "IT", "MIS", "UAT", "SQA"],
+  "max_detail_pages_per_run": 60,
+  "request_delay_seconds": 2
+}

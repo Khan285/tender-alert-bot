@@ -1,0 +1,40 @@
+name: Tender alert
+on:
+  schedule:
+    - cron: "0 3 * * *"   # 09:00 Dhaka time, daily
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "normal = real run, test = send Telegram test message, dry = print matches only"
+        type: choice
+        default: normal
+        options: [normal, test, dry]
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MODE: ${{ github.event.inputs.mode || 'normal' }}
+        run: |
+          if [ "$MODE" = "test" ]; then python scraper.py --test
+          elif [ "$MODE" = "dry" ]; then python scraper.py --dry
+          else python scraper.py; fi
+      - name: Save seen state
+        if: ${{ (github.event.inputs.mode || 'normal') == 'normal' }}
+        run: |
+          git config user.name "tender-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add seen.json || true
+          git diff --cached --quiet || (git commit -m "update seen" && git push)
